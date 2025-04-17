@@ -1,6 +1,7 @@
-const { Configuration, OpenAIApi } = require('openai');
+const { OpenAIApi } = require("openai");
+const openaiModule = require("openai");
 
-const configuration = new Configuration({
+const configuration = new openaiModule.Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
@@ -40,9 +41,9 @@ module.exports = async (req, res) => {
     res.status(200).json({ response });
 
   } catch (error) {
-    console.error('❌ Erreur OpenAI :', JSON.stringify(error, null, 2));
+    console.error('❌ Erreur OpenAI :', error.response?.data || error.message || error);
     res.status(500).json({
-      error: error?.response?.data || error?.message || 'Erreur lors de l’appel OpenAI',
+      error: error?.response?.data || error?.message || 'Erreur OpenAI'
     });
   }
 };
