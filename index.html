@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Chatbot Léa - Byeol</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 1rem; background: #f6faff; display: flex; flex-direction: column; height: 100vh; }
+    .chat-container { flex: 1; display: flex; flex-direction: column; border-radius: 12px; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.05); padding: 1rem; }
+    .messages { flex: 1; overflow-y: auto; margin-bottom: 1rem; }
+    .message { margin: 0.5rem 0; }
+    .user { color: #0077cc; }
+    .bot { color: #333; }
+    .input-row { display: flex; gap: 0.5rem; }
+    input[type="text"] { flex: 1; padding: 0.5rem; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; }
+    button { padding: 0.5rem 1rem; background: #b3d9ff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div id="messages" class="messages"></div>
+    <div class="input-row">
+      <input id="userInput" type="text" placeholder="Posez votre question...">
+      <button onclick="sendMessage()">Envoyer</button>
+    </div>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById('userInput');
+      const messages = document.getElementById('messages');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const userMessage = document.createElement('div');
+      userMessage.className = 'message user';
+      userMessage.textContent = '👩 ' + text;
+      messages.appendChild(userMessage);
+      input.value = '';
+
+      const botMessage = document.createElement('div');
+      botMessage.className = 'message bot';
+      botMessage.textContent = '🤖 Léa : ...';
+      messages.appendChild(botMessage);
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text })
+        });
+
+        const data = await res.json();
+        botMessage.textContent = '🤖 Léa : ' + (data.response || data.error || 'Une erreur est survenue.');
+      } catch (err) {
+        console.error('❌ Erreur réseau ou serveur :', err);
+        botMessage.textContent = '🤖 Léa : Erreur de connexion.';
+      }
+
+      messages.scrollTop = messages.scrollHeight;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "byeol-chatbot-cjs",
+  "version": "1.0.0",
+  "main": "index.html",
+  "scripts": {
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "openai": "^4.0.0"
+  }
+}
